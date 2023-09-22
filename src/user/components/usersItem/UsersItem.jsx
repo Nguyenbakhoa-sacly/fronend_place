@@ -1,0 +1,30 @@
+import React from 'react'
+import { Link } from 'react-router-dom'
+import './UsersItem.scss'
+import { Card, Avatar } from '../../../shared'
+
+const UsersItem = (props) => {
+  const { key, id, image, name, placeCount } = props
+  return (
+    <>
+      <li className='user-item' key={key}>
+        <Card className='user-item__content'>
+          <Link to={`/${id}/places`}>
+            <div className="user-item__image">
+              <Avatar image={image} alt={name} />
+            </div>
+            <div className="user-item__info">
+              <h2>{name}</h2>
+              <h3>
+                {placeCount}
+                {placeCount === 1 ? ' Place ' : " places "}
+              </h3>
+            </div>
+          </Link>
+        </Card>
+      </li>
+    </>
+  )
+}
+
+export default UsersItem
