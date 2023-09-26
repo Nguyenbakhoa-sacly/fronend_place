@@ -1,0 +1,29 @@
+.authentication__header {
+  color: white;
+  text-align: center;
+}
+
+.authentication {
+  width: 90%;
+  max-width: 25rem;
+  margin: 7rem auto;
+  text-align: center;
+
+  .authentication-showPass {
+    position: relative;
+
+    .authentication-icon__eye {
+      position: absolute;
+      top: 35px;
+      right: 9px;
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      color: rgb(124, 126, 126);
+    }
+  }
+}
+
+.authentication form {
+  margin-bottom: 1rem;
+}

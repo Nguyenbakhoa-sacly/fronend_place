@@ -2,7 +2,7 @@
 import './App.css'
 import Layout from './layout'
 import { Route, Routes } from 'react-router-dom'
-import { Users } from './user'
+import { Users, Auth } from './user'
 import { NewPlaces, UserPlaces, UpdatePlace } from './places'
 function App() {
 
@@ -14,6 +14,7 @@ function App() {
           <Route path='/:userId/places' element={<UserPlaces />} />
           <Route path='/places/new' element={<NewPlaces />} />
           <Route path='/places/:placeId' element={<UpdatePlace />} />
+          <Route path='/auth' element={<Auth />} />
         </Route>
       </Routes>
     </>

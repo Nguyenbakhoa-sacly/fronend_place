@@ -14,7 +14,6 @@ const PlaceItem = (props) => {
   }
   const handleDelete = () => {
     alert(`Are you sure you want to delete`)
-
     setShowConfirmModal(false);
   }
   return (
