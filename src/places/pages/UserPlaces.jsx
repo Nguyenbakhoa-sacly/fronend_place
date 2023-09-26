@@ -1,11 +1,10 @@
 import React from 'react'
-import PlaceList from '../components/placeListComponent/PlaceList'
 import { useParams } from 'react-router-dom'
-
+import PlaceList from '../components/placeListComponent/PlaceList'
 const DUMMY_PLACES = [
   {
     id: 'p1',
-    title: 'Empire State Building',
+    title: 'Empire... State Building',
     description: 'One of the most famous sky scrapers in the world!',
     imageUrl: 'https://vuonlan.com.vn/wp-content/uploads/2023/06/50-ten-cac-loai-hoa-dep-y-nghia-nhat-the-gioi-982.jpg',
     address: '20 W 30th St, New York, NY 10001',

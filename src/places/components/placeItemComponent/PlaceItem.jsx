@@ -5,13 +5,17 @@ const PlaceItem = (props) => {
   const { key, id, title, image, description, address, creatorId, coordinates } = props
 
   const [showMap, setShowMap] = useState(false)
-
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
   const handleShowMap = () => {
     setShowMap(true)
   }
   const handleHideMap = () => {
     setShowMap(false)
+  }
+  const handleDelete = () => {
+    alert(`Are you sure you want to delete`)
 
+    setShowConfirmModal(false);
   }
   return (
     <>
@@ -24,17 +28,27 @@ const PlaceItem = (props) => {
         footerClass='place-item__modal-actions'
       >
         <div className='map-container'>
-
           <Map address={address} />
-          {/* <iframe title="map" width="100%" height="100%" frameBorder="0" scrolling="no" marginHeight="0" marginWidth="0"
-            src={'https://maps.google.com/maps?q=' + props.coordinates.lat.toString() + ',' + props.coordinates.lng.toString() + '&t=&z=15&ie=UTF8&iwloc=&output=embed'}>
-          </iframe>
-          <script
-            type='text/javascript'
-            src='https://embedmaps.com/google-maps-authorization/script.js?id=5a33be79e53caf0a07dfec499abf84b7b481f165'>
-          </script> */}
         </div>
       </Modal>
+
+      <Modal
+        show={showConfirmModal}
+        // onCancel={() => setShowConfirmModal(false)}
+        header='Are tou sure'
+        footerClass='place-item__modal-actions'
+        footer={
+          <>
+            <Button inverse onClick={() => setShowConfirmModal(false)}>CANCEL</Button>
+            <Button danger onClick={handleDelete}>DELETE</Button>
+          </>
+        }
+
+      >
+        <p>Do you want to peoceed and delete this place ?
+          Please note that it can't be undone thereafter.
+        </p >
+      </Modal >
       <li className='place-item'>
         <Card className='place-item__content'>
           <div className='place-item__image'>
@@ -46,13 +60,12 @@ const PlaceItem = (props) => {
             <p>{description}</p>
           </div>
           <div className='place-item__actions'>
-
             <Button
               onClick={handleShowMap}
               inverse
             >VIEW ON MAP</Button>
             <Button to={`/places/${id}`}>EDIT</Button>
-            <Button danger>DELETE</Button>
+            <Button onClick={() => setShowConfirmModal(true)} danger>DELETE</Button>
           </div>
         </Card>
       </li>
