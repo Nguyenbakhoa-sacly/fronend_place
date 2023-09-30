@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import './Auth.scss'
 import { Card, Input, Button } from '../../../shared'
 import {
@@ -8,10 +8,11 @@ import {
 } from '../../../shared/util/validators'
 import { useForm } from '../../../shared/hooks/form-hook'
 import { BiShow, BiHide } from 'react-icons/bi'
-
+import { AuthContext } from '../../../shared/context/auth-context'
 const Auth = () => {
   const [showHideEye, setShowHideEye] = useState(false)
   const [isLoginMode, setIsLoginMode] = useState(true)
+  const auth = useContext(AuthContext)
   const [formState, inputHandler, setFormData] = useForm({
     email: {
       value: '',
@@ -26,6 +27,7 @@ const Auth = () => {
   const authHandleSubmit = (e) => {
     e.preventDefault();
     console.log(formState.inputs)
+    auth.login()
   }
   const switchModeHandler = (e) => {
     //login

@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Button, Card, Modal, Map } from '../../../shared'
+import { AuthContext } from '../../../shared/context/auth-context'
 import './PlaceItem.scss'
 const PlaceItem = (props) => {
+  const auth = useContext(AuthContext)
   const { key, id, title, image, description, address, creatorId, coordinates } = props
 
   const [showMap, setShowMap] = useState(false)
@@ -18,6 +20,7 @@ const PlaceItem = (props) => {
   }
   return (
     <>
+      {/* modal view map */}
       <Modal
         show={showMap}
         onCancel={handleHideMap}
@@ -30,7 +33,7 @@ const PlaceItem = (props) => {
           <Map address={address} />
         </div>
       </Modal>
-
+      {/* modal delete */}
       <Modal
         show={showConfirmModal}
         // onCancel={() => setShowConfirmModal(false)}
@@ -38,16 +41,24 @@ const PlaceItem = (props) => {
         footerClass='place-item__modal-actions'
         footer={
           <>
-            <Button inverse onClick={() => setShowConfirmModal(false)}>CANCEL</Button>
-            <Button danger onClick={handleDelete}>DELETE</Button>
+            <Button
+              inverse
+              onClick={() => setShowConfirmModal(false)}
+            >CANCEL</Button>
+            <Button
+              danger
+              onClick={handleDelete}
+            >DELETE</Button>
           </>
         }
-
       >
         <p>Do you want to peoceed and delete this place ?
           Please note that it can't be undone thereafter.
         </p >
       </Modal >
+
+      {/* modal*/}
+
       <li className='place-item'>
         <Card className='place-item__content'>
           <div className='place-item__image'>
@@ -63,8 +74,14 @@ const PlaceItem = (props) => {
               onClick={handleShowMap}
               inverse
             >VIEW ON MAP</Button>
-            <Button to={`/places/${id}`}>EDIT</Button>
-            <Button onClick={() => setShowConfirmModal(true)} danger>DELETE</Button>
+            {
+              auth.isLoggedIn && (
+                <>
+                  <Button to={`/places/${id}`}>EDIT</Button>
+                  <Button onClick={() => setShowConfirmModal(true)} danger>DELETE</Button>
+                </>
+              )
+            }
           </div>
         </Card>
       </li>
