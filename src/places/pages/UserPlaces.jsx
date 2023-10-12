@@ -21,13 +21,11 @@ const DUMMY_PLACES = [
     imageUrl: 'https://hoatuoihoamy.com/wp-content/uploads/2021/05/IMG_9880-1.jpg',
     address: '20 W 30th St, New York, NY 10001',
     location: {
-      lat: 40.7484405,
-      lng: -73.9878584
+      lat: "21.02857",
+      lng: "105.85064"
     },
     creatorId: 'a2'
-
   },
-
 ]
 
 const UserPlaces = () => {

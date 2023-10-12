@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { Button, Card, Modal, Map } from '../../../shared'
+import { Button, Card, Modal, PlacesMap } from '../../../shared'
 import { AuthContext } from '../../../shared/context/auth-context'
 import './PlaceItem.scss'
 const PlaceItem = (props) => {
@@ -30,7 +30,7 @@ const PlaceItem = (props) => {
         footerClass='place-item__modal-actions'
       >
         <div className='map-container'>
-          <Map address={address} />
+          <PlacesMap coordinates={coordinates} />
         </div>
       </Modal>
       {/* modal delete */}
