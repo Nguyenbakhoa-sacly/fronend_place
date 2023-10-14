@@ -1,7 +1,8 @@
 
 import React, { useState, useContext } from 'react'
+import axios from 'axios'
 import './Auth.scss'
-import { Card, Input, Button } from '../../../shared'
+import { Card, Input, Button, ErrorModal, LoadingSpinner } from '../../../shared'
 import {
   VALIDATOR_EMAIL, VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE
@@ -12,7 +13,10 @@ import { AuthContext } from '../../../shared/context/auth-context'
 const Auth = () => {
   const [showHideEye, setShowHideEye] = useState(false)
   const [isLoginMode, setIsLoginMode] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState()
   const auth = useContext(AuthContext)
+
   const [formState, inputHandler, setFormData] = useForm({
     email: {
       value: '',
@@ -24,10 +28,28 @@ const Auth = () => {
     }
   }, false);
 
-  const authHandleSubmit = (e) => {
+  const authHandleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formState.inputs)
-    auth.login()
+    if (isLoginMode) {
+
+    } else {
+      setIsLoading(true);
+      await axios.post(`http://127.0.0.1:3000/api/users/signup`, {
+        name: formState.inputs.name.value,
+        email: formState.inputs.email.value,
+        password: formState.inputs.password.value,
+      }).then((response) => {
+        console.log(response);
+        setIsLoading(false);
+        auth.login()
+
+      }).catch((error) => {
+        console.log(error);
+        setIsLoading(false);
+        setError(error.message || 'Something went wrong, please try again.');
+      });
+    }
+
   }
   const switchModeHandler = (e) => {
     //login
@@ -57,9 +79,12 @@ const Auth = () => {
     }
     setIsLoginMode(prevMode => !prevMode)
   }
+
+
   return (
     <>
       <Card className='authentication'>
+        {isLoading && <LoadingSpinner asOverlay />}
         <h2>Login Required</h2>
         <hr />
         <form onSubmit={authHandleSubmit}>
