@@ -28,9 +28,8 @@
       }
 
       .user-item__info {
-
         h2 {
-          font-size: 1.5rem;
+          font-size: 20px;
           margin: 0 0 0.5rem 0;
           font-weight: normal;
           color: #ffd900;
@@ -43,12 +42,16 @@
       }
     }
   }
+
+  &:hover h2 {
+    color: #292929;
+  }
 }
 
-.user-item:hover h2,
-.user-item:active h2 {
-  color: #292929;
-}
+// .user-item:hover h2,
+// .user-item:active h2 {
+//   color: #292929;
+// }
 
 .user-item:hover h3,
 .user-item:active h3 {

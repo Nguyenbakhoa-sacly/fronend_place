@@ -1,25 +1,43 @@
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 import { UsersList } from '../index'
+import { ErrorModal, LoadingSpinner } from '../../shared'
 const Users = () => {
-  const USERS = [
-    {
-      id: "a1",
-      name: "ba khoa",
-      image: "https://file.hstatic.net/200000427529/article/y-nghia-hoa-cuc-hoa-mi_8a0b4007caf240f4a6f32d45e6a414d7.jpg",
-      places: 3
-    },
-    {
-      id: "a2",
-      name: "ba khoa",
-      image: "https://file.hstatic.net/200000427529/article/y-nghia-hoa-cuc-hoa-mi_8a0b4007caf240f4a6f32d45e6a414d7.jpg",
-      places: 3
-    },
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
+  const [data, setData] = useState([])
+  useEffect(() => {
+    const sendRequest = async () => {
+      setIsLoading(true);
+      await axios.get(`http://127.0.0.1:3000/api/users`)
+        .then((response) => {
+          setData(response.data.users);
+          setIsLoading(false);
+        }).catch((error) => {
+          setIsLoading(false);
+          setError(error.message);
+        });
+    }
+    sendRequest();
 
-  ]
+  }, [])
+  const errorHandler = () => {
+    setError(null);
+  }
+  console.log(data)
   return (
     <>
-      <UsersList items={USERS} />
+      <ErrorModal error={error} onClear={errorHandler} />
+      {isLoading && (
+        <div className='center'>
+          <LoadingSpinner />
+        </div>
+      )}
+      {
+        !isLoading && data &&
+        <UsersList items={data} />
+      }
     </>
   )
 }
