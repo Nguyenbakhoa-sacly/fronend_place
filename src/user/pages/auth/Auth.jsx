@@ -31,7 +31,7 @@ const Auth = () => {
     e.preventDefault();
     if (isLoginMode) {
       try {
-        await sendRequest(
+        const responseData = await sendRequest(
           'http://127.0.0.1:3000/api/users/login',
           'POST',
           JSON.stringify({
@@ -42,10 +42,10 @@ const Auth = () => {
             'Content-Type': 'application/json'
           }
         );
-        auth.login();
+        auth.login(responseData.users.id);
       } catch (err) { }
     } else {
-      await sendRequest(
+      const responseData = await sendRequest(
         'http://127.0.0.1:3000/api/users/signup',
         'POST',
         JSON.stringify({
@@ -58,7 +58,7 @@ const Auth = () => {
         }
       );
 
-      auth.login();
+      auth.login(responseData.users.id);
     }
 
   }

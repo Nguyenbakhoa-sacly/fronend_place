@@ -1,9 +1,14 @@
-import React, { useCallback } from 'react'
+import React, { useContext } from 'react'
+import { useNavigate } from "react-router-dom";
 import './NewPlaces.scss'
-import { Input, Button } from '../../../shared'
+import { Input, Button, ErrorModal, LoadingSpinner } from '../../../shared'
 import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from '../../../shared/util/validators'
 import { useForm } from '../../../shared/hooks/form-hook'
+import { useHttpClient } from '../../../shared/hooks/http-hook'
+import { AuthContext } from '../../../shared/context/auth-context'
 const NewPlaces = () => {
+  const auth = useContext(AuthContext)
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   const [formState, inputaHandler] = useForm(
     {
@@ -21,14 +26,32 @@ const NewPlaces = () => {
       }
     }, false);
 
-  const placeSubmithandler = (e) => {
+  const navigate = useNavigate();
+  const placeSubmithandler = async (e) => {
     e.preventDefault();
-    console.log(formState.inputs); //send this to the backend
+    try {
+      await sendRequest(
+        `http://127.0.0.1:3000/api/places`,
+        'POST',
+        JSON.stringify({
+          title: formState.inputs.title.value,
+          description: formState.inputs.description.value,
+          address: formState.inputs.address.value,
+          creatorId: auth.userId
+        }),
+        { 'Content-Type': 'application/json' }
+      )
+      navigate('/');
+    } catch (e) {
+
+    }
   }
 
   return (
     <>
+      <ErrorModal error={error} onClear={clearError} />
       <form className='place-form' onSubmit={placeSubmithandler}>
+        {isLoading && <LoadingSpinner asOverlay />}
         <Input
           id="title"
           element='input'

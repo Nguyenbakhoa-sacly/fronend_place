@@ -9,13 +9,18 @@ import { useCallback, useState } from 'react'
 function App() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userId, setUserId] = useState(false)
 
-  const login = useCallback(() => {
-    setIsLoggedIn(true)
+  const login = useCallback((uid) => {
+    setIsLoggedIn(true);
+    setUserId(uid);
     navigate("/");
+
   }, [])
+
   const logout = useCallback(() => {
-    setIsLoggedIn(false)
+    setIsLoggedIn(false);
+    setUserId(null);
     navigate("/auth");
   }, [])
 
@@ -44,6 +49,7 @@ function App() {
     <>
       <AuthContext.Provider value={{
         isLoggedIn: isLoggedIn,
+        userId: userId,
         login: login,
         logout: logout
       }}>
