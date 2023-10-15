@@ -5,7 +5,7 @@ import { CSSTransition } from 'react-transition-group'
 import './Modal.scss'
 import BackDrop from '../backDropComponent/BackDrop'
 
-const ModalOverlay = (props) => {
+const ModalOverlay = (props, ref) => {
   const content = (
     <div
       className={`modal ${props.className}`}

@@ -1,34 +1,27 @@
 
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
 import { UsersList } from '../index'
 import { ErrorModal, LoadingSpinner } from '../../shared'
+import { useHttpClient } from '../../shared/hooks/http-hook'
 const Users = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState();
   const [data, setData] = useState([])
-  useEffect(() => {
-    const sendRequest = async () => {
-      setIsLoading(true);
-      await axios.get(`http://127.0.0.1:3000/api/users`)
-        .then((response) => {
-          setData(response.data.users);
-          setIsLoading(false);
-        }).catch((error) => {
-          setIsLoading(false);
-          setError(error.message);
-        });
-    }
-    sendRequest();
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
-  }, [])
-  const errorHandler = () => {
-    setError(null);
-  }
-  console.log(data)
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const responseData = await sendRequest(
+          `http://127.0.0.1:3000/api/users`);
+        setData(responseData.users);
+      } catch (e) { }
+    }
+    fetchUsers();
+  }, [sendRequest])
+
   return (
     <>
-      <ErrorModal error={error} onClear={errorHandler} />
+      <ErrorModal error={error} onClear={clearError} />
+
       {isLoading && (
         <div className='center'>
           <LoadingSpinner />
