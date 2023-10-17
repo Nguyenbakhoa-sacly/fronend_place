@@ -1,11 +1,13 @@
 import React, { useState, useContext } from 'react'
-import { Button, Card, Modal, PlacesMap } from '../../../shared'
+import { Button, Card, Modal, PlacesMap, ErrorModal, LoadingSpinner } from '../../../shared'
 import { AuthContext } from '../../../shared/context/auth-context'
+import { useHttpClient } from '../../../shared/hooks/http-hook'
+
 import './PlaceItem.scss'
 const PlaceItem = (props) => {
   const auth = useContext(AuthContext)
-  const { key, id, title, image, description, address, creatorId, coordinates } = props
-
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const { id, title, image, description, address, creatorId, coordinates } = props
   const [showMap, setShowMap] = useState(false)
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const handleShowMap = () => {
@@ -14,12 +16,26 @@ const PlaceItem = (props) => {
   const handleHideMap = () => {
     setShowMap(false)
   }
-  const handleDelete = () => {
-    alert(`Are you sure you want to delete`)
+  const handleDelete = async () => {
     setShowConfirmModal(false);
+
+    try {
+      await sendRequest(
+        `http://127.0.0.1:3000/api/places/${id}`,
+        'DELETE'
+      );
+      props.onDelete(id);
+
+    } catch (e) {
+
+    }
+
+
+
   }
   return (
     <>
+      <ErrorModal error={error} onClear={clearError} />
       {/* modal view map */}
       <Modal
         show={showMap}
@@ -61,6 +77,7 @@ const PlaceItem = (props) => {
 
       <li className='place-item'>
         <Card className='place-item__content'>
+          {isLoading && <LoadingSpinner asOverlay />}
           <div className='place-item__image'>
             <img src={image} alt={title} />
           </div>
@@ -75,7 +92,7 @@ const PlaceItem = (props) => {
               inverse
             >VIEW ON MAP</Button>
             {
-              auth.isLoggedIn && (
+              auth.userId === creatorId && (
                 <>
                   <Button to={`/places/${id}`}>EDIT</Button>
                   <Button onClick={() => setShowConfirmModal(true)} danger>DELETE</Button>

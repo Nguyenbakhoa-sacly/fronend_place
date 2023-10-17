@@ -1,41 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { Input, Button, Card } from '../../../shared';
-import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from '../../../shared/util/validators';
+import React, { useEffect, useState, useContext } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { Input, Button, Card, LoadingSpinner, ErrorModal }
+  from '../../../shared';
+import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH }
+  from '../../../shared/util/validators';
 import { useForm } from '../../../shared/hooks/form-hook';
-
-const DUMMY_PLACES = [
-  {
-    id: 'p1',
-    title: 'Empire...State Building',
-    description: 'One of the most famous sky scrapers in the world!',
-    imageUrl: 'https://vuonlan.com.vn/wp-content/uploads/2023/06/50-ten-cac-loai-hoa-dep-y-nghia-nhat-the-gioi-982.jpg',
-    address: '20 W 30th St, New York, NY 10001',
-    location: {
-      lat: 40.7484405,
-      lng: -73.9878584
-    },
-    creatorId: 'a1'
-  },
-  {
-    id: 'p2',
-    title: 'Empire111 State Building',
-    description: 'One of the most famous sky scrapers in the world!',
-    imageUrl: 'https://hoatuoihoamy.com/wp-content/uploads/2021/05/IMG_9880-1.jpg',
-    address: '20 W 30th St, New York, NY 10001',
-    location: {
-      lat: 40.7484405,
-      lng: -73.9878584
-    },
-    creatorId: 'a2'
-
-  },
-
-]
-
+import { useHttpClient } from '../../../shared/hooks/http-hook'
+import { AuthContext } from '../../../shared/context/auth-context';
 const UpdatePlace = () => {
   const placeId = useParams().placeId;
-  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+  const auth = useContext(AuthContext)
+  const [loadedPlace, setLoadedPlace] = useState()
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [formState, inputaHandler, setFormData] = useForm({
     title: {
       value: '',
@@ -47,31 +24,56 @@ const UpdatePlace = () => {
     },
   }, false);
 
-  const identifiedPlaces = DUMMY_PLACES.find(pl => pl.id === placeId
-  )
-
   useEffect(() => {
-    if (identifiedPlaces) {
-      setFormData({
-        title: {
-          value: identifiedPlaces.title,
-          isValid: true
-        },
-        description: {
-          value: identifiedPlaces.description,
-          isValid: true
-        },
-      }, true)
-    }
-    setIsLoading(false);
-  }, [setFormData, identifiedPlaces])
+    const fetchPlace = async () => {
+      try {
+        const responseData = await sendRequest(`http://127.0.0.1:3000/api/places/${placeId}`);
+        setLoadedPlace(responseData.place)
+        setFormData({
+          title: {
+            value: responseData.place.title,
+            isValid: true
+          },
+          description: {
+            value: responseData.place.description,
+            isValid: true
+          },
+        }, true)
 
-  const handleSubmitHandler = (e) => {
+      } catch (e) {
+
+      }
+    }
+    fetchPlace();
+
+  }, [sendRequest, placeId, setFormData]);
+
+  const handleSubmitHandler = async (e) => {
     e.preventDefault();
-    console.log(formState.inputs); //send this to the backend
+    try {
+      await sendRequest(
+        `http://127.0.0.1:3000/api/places/${placeId}`,
+        'PATCH',
+        JSON.stringify({
+          title: formState.inputs.title.value,
+          description: formState.inputs.description.value,
+        }),
+        {
+          'Content-Type': 'application/json'
+        });
+      navigate(`/${auth.userId}/places`)
+    } catch (e) { }
   }
 
-  if (!identifiedPlaces) {
+  if (isLoading) {
+    return (
+      <div className='center'>
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (!loadedPlace && !error) {
     return (
       < div className='center'>
         <Card>
@@ -81,43 +83,40 @@ const UpdatePlace = () => {
     )
   }
 
-  if (isLoading) {
-    return (
-      <div className='center'>
-        <h2>Loading...</h2>
-      </div>
-    )
-  }
-
   return (
     <>
+      {/* <ErrorModal error={error} onClear={clearError} /> */}
       < form className='place-form' onSubmit={handleSubmitHandler}>
-        <Input
-          id="title"
-          element="input"
-          type="text"
-          label="Title"
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText="Please enter a valid title."
-          onInput={inputaHandler}
-          initiaValue={formState.inputs.title.value}
-          initiaValid={formState.inputs.title.isValid}
-        />
-        <Input
-          id="description"
-          element="textarea"
-          label="Description"
-          validators={[VALIDATOR_MINLENGTH(5)]}
-          errorText='Please enter a valid decription (at least 5 characters ).'
-          onInput={inputaHandler}
-          initiaValue={formState.inputs.description.value}
-          initiaValid={formState.inputs.description.isValid}
-        />
-        <Button
-          type='submit'
-          disabled={!formState.isValid}>
-          UPDATE PLACE
-        </Button>
+        {!isLoading && loadedPlace && (
+          <>
+            <Input
+              id="title"
+              element="input"
+              type="text"
+              label="Title"
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText="Please enter a valid title."
+              onInput={inputaHandler}
+              initiaValue={loadedPlace.title}
+              initiaValid={true}
+            />
+            <Input
+              id="description"
+              element="textarea"
+              label="Description"
+              validators={[VALIDATOR_MINLENGTH(5)]}
+              errorText='Please enter a valid decription (at least 5 characters ).'
+              onInput={inputaHandler}
+              initiaValue={loadedPlace.description}
+              initiaValid={true}
+            />
+            <Button
+              type='submit'
+              disabled={!formState.isValid}>
+              UPDATE PLACE
+            </Button>
+          </>
+        )}
       </form >
     </>
   )

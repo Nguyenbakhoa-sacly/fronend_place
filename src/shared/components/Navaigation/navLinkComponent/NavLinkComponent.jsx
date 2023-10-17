@@ -16,7 +16,7 @@ const NavLinkComponent = (props) => {
           (
             <>
               <li>
-                <NavLink to='/a1/places'> MY PLACES  </NavLink>
+                <NavLink to={`/${auth.userId}/places`}> MY PLACES  </NavLink>
               </li>
               <li>
                 <NavLink to='/places/new'> ADD PLACES  </NavLink>

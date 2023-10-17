@@ -20,7 +20,7 @@ const Users = () => {
 
   return (
     <>
-      <ErrorModal error={error} onClear={clearError} />
+      {/* <ErrorModal error={error} onClear={clearError} /> */}
 
       {isLoading && (
         <div className='center'>
