@@ -1,7 +1,12 @@
 
 import React, { useState, useContext } from 'react'
 import './Auth.scss'
-import { Card, Input, Button, ErrorModal, LoadingSpinner } from '../../../shared'
+import {
+  Card, Input, Button,
+  ErrorModal, LoadingSpinner,
+  ImageUpload
+}
+  from '../../../shared'
 import {
   VALIDATOR_EMAIL, VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE
@@ -45,19 +50,17 @@ const Auth = () => {
         auth.login(responseData.users.id);
       } catch (err) { }
     } else {
+      const formData = new FormData();
+      formData.append('email', formState.inputs.email.value);
+      formData.append('name', formState.inputs.name.value);
+      formData.append('password', formState.inputs.password.value);
+      formData.append('image', formState.inputs.image.value);
+
       const responseData = await sendRequest(
         'http://127.0.0.1:3000/api/users/signup',
         'POST',
-        JSON.stringify({
-          name: formState.inputs.name.value,
-          email: formState.inputs.email.value,
-          password: formState.inputs.password.value
-        }),
-        {
-          'Content-Type': 'application/json'
-        }
+        formData
       );
-
       auth.login(responseData.users.id);
     }
 
@@ -69,7 +72,8 @@ const Auth = () => {
       setFormData(
         {
           ...formState.inputs,
-          // name: undefined
+          name: undefined,
+          image: undefined
         }
         ,
         formState.inputs.email.isValid &&
@@ -83,6 +87,10 @@ const Auth = () => {
           ...formState.inputs,
           name: {
             value: '',
+            isValid: false
+          },
+          image: {
+            value: null,
             isValid: false
           }
         }, false
@@ -114,6 +122,15 @@ const Auth = () => {
               />
             )
           }
+
+          {!isLoginMode &&
+            <ImageUpload
+              center
+              id='image'
+              onInput={inputHandler}
+              errorText="Places provide an image."
+            />}
+
           <Input
             id="email"
             element='input'

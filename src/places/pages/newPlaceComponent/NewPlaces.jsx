@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { useNavigate } from "react-router-dom";
 import './NewPlaces.scss'
-import { Input, Button, ErrorModal, LoadingSpinner } from '../../../shared'
+import { Input, Button, ErrorModal, LoadingSpinner, ImageUpload } from '../../../shared'
 import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from '../../../shared/util/validators'
 import { useForm } from '../../../shared/hooks/form-hook'
 import { useHttpClient } from '../../../shared/hooks/http-hook'
@@ -23,6 +23,10 @@ const NewPlaces = () => {
       address: {
         value: '',
         isValid: false
+      },
+      image: {
+        value: null,
+        isValid: false
       }
     }, false);
 
@@ -30,21 +34,18 @@ const NewPlaces = () => {
   const placeSubmithandler = async (e) => {
     e.preventDefault();
     try {
-      await sendRequest(
-        `http://127.0.0.1:3000/api/places`,
-        'POST',
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.description.value,
-          address: formState.inputs.address.value,
-          creatorId: auth.userId
-        }),
-        { 'Content-Type': 'application/json' }
-      )
-      navigate('/');
-    } catch (e) {
 
-    }
+      const formData = new FormData();
+      formData.append('title', formState.inputs.title.value);
+      formData.append('description', formState.inputs.description.value);
+      formData.append('address', formState.inputs.address.value);
+      formData.append('creatorId', auth.userId);
+      formData.append('image', formState.inputs.image.value);
+
+      await sendRequest(
+        `http://127.0.0.1:3000/api/places`, 'POST', formData)
+      navigate('/');
+    } catch (e) { }
   }
 
   return (
@@ -76,6 +77,12 @@ const NewPlaces = () => {
           validators={[VALIDATOR_REQUIRE()]}
           errorText='Please enter a valid address.'
           onInput={inputaHandler}
+        />
+        <ImageUpload
+          id='image'
+          onInput={inputaHandler}
+          errorText="Places provide an image."
+
         />
         <Button
           type='submit'
