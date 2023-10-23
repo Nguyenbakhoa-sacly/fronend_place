@@ -5,23 +5,36 @@ import { Route, Routes, useNavigate } from 'react-router-dom'
 import { Users, Auth } from './user'
 import { NewPlaces, UserPlaces, UpdatePlace } from './places'
 import { AuthContext } from './shared/context/auth-context'
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useEffect } from 'react'
 function App() {
   const navigate = useNavigate();
   const [token, setToken] = useState(false)
   const [userId, setUserId] = useState(false)
 
+
   const login = useCallback((uid, token) => {
     setToken(token);
     setUserId(uid);
+
+    localStorage.setItem('userData', JSON.stringify(
+      { userId: uid, token: token }));
     navigate("/");
   }, [])
 
   const logout = useCallback(() => {
     setToken(null);
     setUserId(null);
+    localStorage.removeItem('userData');
     navigate("/auth");
   }, [])
+
+  //auto login 
+  useEffect(() => {
+    const storeData = JSON.parse(localStorage.getItem('userData'));
+    if (storeData && storeData.token) {
+      login(storeData.userId, storeData.token);
+    }
+  }, [login]);
 
   return (
     <>
