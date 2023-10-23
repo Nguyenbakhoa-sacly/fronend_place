@@ -16,10 +16,10 @@ import { BiShow, BiHide } from 'react-icons/bi'
 import { AuthContext } from '../../../shared/context/auth-context';
 import { useHttpClient } from '../../../shared/hooks/http-hook'
 const Auth = () => {
+  const auth = useContext(AuthContext)
   const [showHideEye, setShowHideEye] = useState(false)
   const [isLoginMode, setIsLoginMode] = useState(true)
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-  const auth = useContext(AuthContext)
 
   const [formState, inputHandler, setFormData] = useForm({
     email: {
@@ -32,43 +32,10 @@ const Auth = () => {
     }
   }, false);
 
-  const authHandleSubmit = async (e) => {
-    e.preventDefault();
-    if (isLoginMode) {
-      try {
-        const responseData = await sendRequest(
-          'http://127.0.0.1:3000/api/users/login',
-          'POST',
-          JSON.stringify({
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value
-          }),
-          {
-            'Content-Type': 'application/json'
-          }
-        );
-        auth.login(responseData.users.id);
-      } catch (err) { }
-    } else {
-      const formData = new FormData();
-      formData.append('email', formState.inputs.email.value);
-      formData.append('name', formState.inputs.name.value);
-      formData.append('password', formState.inputs.password.value);
-      formData.append('image', formState.inputs.image.value);
-
-      const responseData = await sendRequest(
-        'http://127.0.0.1:3000/api/users/signup',
-        'POST',
-        formData
-      );
-      auth.login(responseData.users.id);
-    }
-
-  }
   const switchModeHandler = (e) => {
     //login
     if (!isLoginMode) {
-      delete formState.inputs.name;
+      // delete formState.inputs.name;
       setFormData(
         {
           ...formState.inputs,
@@ -98,6 +65,43 @@ const Auth = () => {
     }
     setIsLoginMode(prevMode => !prevMode)
   }
+
+  const authHandleSubmit = async (e) => {
+    e.preventDefault();
+    if (isLoginMode) {
+      try {
+        const responseData = await sendRequest(
+          'http://127.0.0.1:3000/api/users/login',
+          'POST',
+          JSON.stringify({
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value
+          }),
+          {
+            'Content-Type': 'application/json'
+          }
+        );
+        auth.login(responseData.userId, responseData.token);
+      } catch (err) { }
+    } else {
+      try {
+        const formData = new FormData();
+        formData.append('email', formState.inputs.email.value);
+        formData.append('name', formState.inputs.name.value);
+        formData.append('password', formState.inputs.password.value);
+        formData.append('image', formState.inputs.image.value);
+
+        const responseData = await sendRequest(
+          'http://127.0.0.1:3000/api/users/signup',
+          'POST',
+          formData
+        );
+        auth.login(responseData.userId, responseData.token);
+      } catch (e) { }
+    }
+
+  }
+
 
   return (
     <>

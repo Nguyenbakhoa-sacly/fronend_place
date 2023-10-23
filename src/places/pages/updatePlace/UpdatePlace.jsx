@@ -8,9 +8,9 @@ import { useForm } from '../../../shared/hooks/form-hook';
 import { useHttpClient } from '../../../shared/hooks/http-hook'
 import { AuthContext } from '../../../shared/context/auth-context';
 const UpdatePlace = () => {
+  const auth = useContext(AuthContext)
   const placeId = useParams().placeId;
   const navigate = useNavigate();
-  const auth = useContext(AuthContext)
   const [loadedPlace, setLoadedPlace] = useState()
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [formState, inputaHandler, setFormData] = useForm({
@@ -27,7 +27,8 @@ const UpdatePlace = () => {
   useEffect(() => {
     const fetchPlace = async () => {
       try {
-        const responseData = await sendRequest(`http://127.0.0.1:3000/api/places/${placeId}`);
+        const responseData = await sendRequest(
+          `http://127.0.0.1:3000/api/places/${placeId}`);
         setLoadedPlace(responseData.place)
         setFormData({
           title: {
@@ -40,9 +41,7 @@ const UpdatePlace = () => {
           },
         }, true)
 
-      } catch (e) {
-
-      }
+      } catch (e) { }
     }
     fetchPlace();
 
@@ -59,7 +58,8 @@ const UpdatePlace = () => {
           description: formState.inputs.description.value,
         }),
         {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token
         });
       navigate(`/${auth.userId}/places`)
     } catch (e) { }

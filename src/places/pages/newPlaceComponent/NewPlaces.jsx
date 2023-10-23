@@ -43,7 +43,13 @@ const NewPlaces = () => {
       formData.append('image', formState.inputs.image.value);
 
       await sendRequest(
-        `http://127.0.0.1:3000/api/places`, 'POST', formData)
+        `http://127.0.0.1:3000/api/places`,
+        'POST',
+        formData,
+        {
+          Authorization: 'Bearer ' + auth.token
+        }
+      )
       navigate('/');
     } catch (e) { }
   }
