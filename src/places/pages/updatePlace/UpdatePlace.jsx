@@ -28,7 +28,7 @@ const UpdatePlace = () => {
     const fetchPlace = async () => {
       try {
         const responseData = await sendRequest(
-          `http://127.0.0.1:3000/api/places/${placeId}`);
+          `${import.meta.env.VITE_BACKEND_URL}/places/${placeId}`);
         setLoadedPlace(responseData.place)
         setFormData({
           title: {
@@ -51,7 +51,7 @@ const UpdatePlace = () => {
     e.preventDefault();
     try {
       await sendRequest(
-        `http://127.0.0.1:3000/api/places/${placeId}`,
+        `${import.meta.env.VITE_BACKEND_URL}/places/${placeId}`,
         'PATCH',
         JSON.stringify({
           title: formState.inputs.title.value,

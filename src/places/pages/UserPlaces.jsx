@@ -13,7 +13,7 @@ const UserPlaces = () => {
       try {
         const responseData =
           await sendRequest(
-            `http://127.0.0.1:3000/api/places/user/${id}`, 'GET')
+            `${import.meta.env.VITE_BACKEND_URL}/places/user/${id}`, 'GET')
         setLoadedPlaces(responseData.places);
       } catch (e) {
 

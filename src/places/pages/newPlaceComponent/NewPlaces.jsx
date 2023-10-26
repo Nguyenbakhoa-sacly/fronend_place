@@ -43,7 +43,7 @@ const NewPlaces = () => {
       formData.append('image', formState.inputs.image.value);
 
       await sendRequest(
-        `http://127.0.0.1:3000/api/places`,
+        `${import.meta.env.VITE_BACKEND_URL}/places`,
         'POST',
         formData,
         {
