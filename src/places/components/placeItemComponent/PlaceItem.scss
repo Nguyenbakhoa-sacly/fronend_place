@@ -1,5 +1,5 @@
 .place-item {
-  margin: 1rem 0;
+  width: 420px;
 
   .place-item__content {
     padding: 0;
@@ -11,7 +11,7 @@
 
     .place-item__image {
       width: 100%;
-      height: 18rem;
+      height: 200px;
       margin-right: 1.5rem;
 
       img {
@@ -36,6 +36,15 @@
   margin: 0 0 0.5rem 0;
 }
 
+.place-item__info {
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+  }
+}
 
 .place-item__modal-content {
   padding: 0;

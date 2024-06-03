@@ -87,13 +87,13 @@ const PlaceItem = (props) => {
           <div className='place-item__actions'>
             <Button
               onClick={handleShowMap}
-              inverse
+
             >VIEW ON MAP</Button>
             {
               auth.userId === creatorId && (
                 <>
                   <Button to={`/places/${id}`}>EDIT</Button>
-                  <Button onClick={() => setShowConfirmModal(true)} danger>DELETE</Button>
+                  <Button onClick={() => setShowConfirmModal(true)}>DELETE</Button>
                 </>
               )
             }

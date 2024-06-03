@@ -1,7 +1,18 @@
 .place-list {
+  width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 12px;
   list-style: none;
-  margin: 1rem auto;
-  padding: 0;
-  width: 90%;
-  max-width: 40rem;
+  padding: 10px;
+}
+
+@media (min-width: 768px) {
+  .place-list {
+    flex-direction: row;
+
+  }
 }

@@ -15,6 +15,8 @@ import { useForm } from '../../../shared/hooks/form-hook'
 import { BiShow, BiHide } from 'react-icons/bi'
 import { AuthContext } from '../../../shared/context/auth-context';
 import { useHttpClient } from '../../../shared/hooks/http-hook'
+
+
 const Auth = () => {
   const auth = useContext(AuthContext)
   const [showHideEye, setShowHideEye] = useState(false)
